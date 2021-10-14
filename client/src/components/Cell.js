@@ -4,7 +4,7 @@ export default class Cell extends React.Component {
 
 
     getValue(){
-        if(this.props.value.empty === 0 ){
+        if(this.props.value.isEmpty === true ){
             return null;
         }
         return "C";
