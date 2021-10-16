@@ -1,35 +1,28 @@
-import React, { Component } from 'react';
+  import React, { Component } from 'react';
+  import { w3cwebsocket as W3CWebSocket } from "websocket";
 import './App.css';
 
 import WorldMap from './components/WorldMap';
 
+const client = new W3CWebSocket('ws://127.0.0.1:8080/ws');
+
 class App extends Component {
 
   state = {
-    height: 8,
-    width: 8,
+    height: 20,
+    width: 30,
   };
 
+  componentWillMount() {
+    client.onopen = () => {
+      console.log('WebSocket Client Connected');
+    };
+    client.onmessage = (message) => {
+      console.log(message);
+    };
+  }
+  
   handleGameStart = () => {
-      let difficulty = document.querySelector("#mapsize_select");
-      if (difficulty.value === "small") {
-          this.setState({
-              height: 8,
-              width: 8,
-          });
-      }
-      if (difficulty.value === "medium") {
-          this.setState({
-              height: 12,
-              width: 12,
-          });
-      }
-      if (difficulty.value === "large") {
-          this.setState({
-              height: 16,
-              width: 16,
-          });
-      }
   }
 
   render() {
@@ -41,15 +34,6 @@ class App extends Component {
                       <h4>Rules</h4>
                       <p>How about some rules here?</p>
                   </div>
-                  <h4>Select a level a click "start"</h4>
-                  <span className="info">Map Size:
-                      <select id="mapsize_select">
-                          <option value="small"> Small </option>
-                          <option value="medium"> Medium </option>
-                          <option value="large"> Large </option>
-                      </select>
-                  </span>
-                  <button onClick={this.handleGameStart}>Start</button>
               </div>
 
               <WorldMap height={height} width={width} />
