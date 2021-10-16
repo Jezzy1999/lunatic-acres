@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"lunatic-acres/config"
 	"lunatic-acres/server"
 	"lunatic-acres/world"
 )
@@ -22,6 +23,7 @@ func serveHome(res http.ResponseWriter, req *http.Request) {
 
 func main() {
 
+	cfg := config.Initialise()
 	worldMap := world.Initialise(20, 20)
 	fmt.Println("Welcome to Luncatic Acres")
 
@@ -36,7 +38,7 @@ func main() {
 		server.ServeWs(w, r)
 	})
 
-	err := http.ListenAndServe("localhost:8080", nil)
+	err := http.ListenAndServe(cfg.Server.Host+":"+cfg.Server.Port, nil)
 	if err != nil {
 		fmt.Println("ListenAndServe: ", err)
 	}
