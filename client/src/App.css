@@ -1,3 +1,9 @@
+:root {
+  --cols: 30;
+  --rows: 20;
+  --tile-size: 40px;
+}
+
 .App {
   text-align: center;
 }
@@ -38,14 +44,20 @@
   min-height: 50px;
 }
 
+.board {    
+  display: grid;
+  grid-template-columns: repeat(var(--cols), var(--tile-size));
+  justify-content: center;
+  align-items: center;
+}
+
 .cell {
   background: #fff;
   border: 1px solid #414c69;
   float: left;
-  line-height: 34px;
-  height: 34px;
+  height: var(--tile-size);
   text-align: center;
-  width: 34px;
+  width: var(--tile-size);
   cursor: pointer;
 }
 
