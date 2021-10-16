@@ -1,7 +1,10 @@
-import React, { Component } from 'react';
+  import React, { Component } from 'react';
+  import { w3cwebsocket as W3CWebSocket } from "websocket";
 import './App.css';
 
 import WorldMap from './components/WorldMap';
+
+const client = new W3CWebSocket('ws://127.0.0.1:8080/ws');
 
 class App extends Component {
 
@@ -10,6 +13,15 @@ class App extends Component {
     width: 30,
   };
 
+  componentWillMount() {
+    client.onopen = () => {
+      console.log('WebSocket Client Connected');
+    };
+    client.onmessage = (message) => {
+      console.log(message);
+    };
+  }
+  
   handleGameStart = () => {
   }
 
