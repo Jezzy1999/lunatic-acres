@@ -1,6 +1,12 @@
 import React from 'react';
 import Cell from './Cell';
 
+import {
+  ContextMenu,
+  MenuItem,
+  ContextMenuTrigger,
+} from "react-contextmenu";
+
 export default class WorldMap extends React.Component {
     state = {
         worldData: this.initWorldData(this.props.height, this.props.width),
@@ -41,32 +47,48 @@ export default class WorldMap extends React.Component {
         });
     }
 
-    _handleContextMenu(e, x, y) {
-        e.preventDefault();
-        let updatedData = this.state.worldData;
-        let win = false;
+    handleClick = (e, data, target) => {
+        console.log(e, data, target);
+    }
 
-        this.setState({
-            worldData: updatedData,
-            gameWon: win,
-        });
+    renderMenu(active, x, y) {
+        return (
+        <div>
+            <ContextMenu id="some_unique_identifier">
+                <MenuItem data={{d:"some_data"}} onClick={this.handleClick}>
+                    ContextMenu Item 1
+                </MenuItem>
+                <MenuItem data={{d:"some_data"}} onClick={this.handleClick}>
+                    ContextMenu Item 2
+                </MenuItem>
+                <MenuItem divider />
+                <MenuItem data={{d:"some_data"}} onClick={this.handleClick}>
+                    ContextMenu Item 3
+                </MenuItem>
+            </ContextMenu>
+        </div>
+        );
     }
 
     renderBoard(data) {
         return data.map((datarow) => {
             return datarow.map((dataitem) => {
                 return (
+                    <ContextMenuTrigger
+                        id="some_unique_identifier"
+                        collect={p => p}
+                    >
                     <div key={dataitem.x * datarow.length + dataitem.y}>
                         <Cell
                             onClick={() => this.handleCellClick(dataitem.x, dataitem.y)}
-                            cMenu={(e) => this._handleContextMenu(e, dataitem.x, dataitem.y)}
                             value={dataitem}
                         />
                         {(datarow[datarow.length - 1] === dataitem) ? <div className="clear" /> : ""}
-                    </div>);
+                    </div>
+                    </ContextMenuTrigger>
+                    );
             })
         });
-
     }
     // Component methods
     componentWillReceiveProps(nextProps) {
@@ -83,6 +105,9 @@ export default class WorldMap extends React.Component {
             <div className="board">
                 {
                     this.renderBoard(this.state.worldData)
+                }
+                {
+                    this.renderMenu(this.state.menuActive)
                 }
             </div>
         );
