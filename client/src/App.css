@@ -65,6 +65,10 @@
   outline: none;
 }
 
+.cell:hover {
+  background: #8e8ba2;
+}
+
 .is-empty {
   background: #7e7b92;
 }
