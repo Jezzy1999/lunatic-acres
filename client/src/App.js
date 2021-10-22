@@ -36,7 +36,7 @@ class App extends Component {
                   </div>
               </div>
 
-              <WorldMap height={height} width={width} />
+              <WorldMap height={height} width={width} socket={client}/>
               
           </div>
       );
