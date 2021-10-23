@@ -8,11 +8,14 @@ import {
 } from "react-contextmenu";
 
 export default class WorldMap extends React.Component {
+
     state = {
         worldData: this.initWorldData(this.props.height, this.props.width),
         gameWon: false,
     };
 
+    ComponentDidMount() {
+    }
     /* Helper Functions */
 
     // Gets initial board data
@@ -48,7 +51,13 @@ export default class WorldMap extends React.Component {
     }
 
     handleClick = (e, data, target) => {
-        console.log(e, data, target);
+        const { socket } = this.props;
+
+        //console.log(e, data, target);
+        console.log(data.cell_x);
+        console.log(data.cell_y);
+
+        socket.send('Hello from React, cell clicked at ' + data.cell_x + ',' + data.cell_y);
     }
 
     renderMenu(active, x, y) {
@@ -76,6 +85,8 @@ export default class WorldMap extends React.Component {
                 return (
                     <ContextMenuTrigger
                         id="some_unique_identifier"
+                        cell_x={dataitem.x}
+                        cell_y={dataitem.y}
                         collect={p => p}
                     >
                     <div key={dataitem.x * datarow.length + dataitem.y}>

@@ -59,6 +59,7 @@ func (c *Server) readPump() {
 			break
 		}
 		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
+		log.Println(string(message[:]))
 		c.send <- message
 	}
 }
