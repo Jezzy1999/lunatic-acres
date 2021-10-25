@@ -14,7 +14,7 @@ class App extends Component {
     width: 30,
   };
 
-  componentWillMount() {
+  componentDidMount() {
     client.onopen = () => {
       console.log('WebSocket Client Connected');
     };
