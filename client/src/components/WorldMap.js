@@ -14,8 +14,29 @@ export default class WorldMap extends React.Component {
         gameWon: false,
     };
 
-    ComponentDidMount() {
+    tick() {
+
+        let updatedData = this.state.worldData;
+        for (let y = 0; y < this.props.height; y++) {
+            for (let x = 0; x < this.props.width; x++) {
+                if (updatedData[y][x].isEmpty === false) {
+                    updatedData[y][x].percentComplete += 1
+                }
+            }
+        }
+        this.setState({
+            worldData: updatedData,
+        });
     }
+
+    componentDidMount() {
+        this.interval = setInterval(() => this.tick(), 1000);        
+    }
+
+    componentWillUnmount() {
+        clearInterval(this.interval);
+    }
+
     /* Helper Functions */
 
     // Gets initial board data
@@ -30,6 +51,7 @@ export default class WorldMap extends React.Component {
                     y: j,
                     isEmpty: true,
                     contents: 0,
+                    percentComplete: 0,
                 };
             }
         }
@@ -51,6 +73,7 @@ export default class WorldMap extends React.Component {
 
             if (updatedData[x][y].contents > 2) {
                 updatedData[x][y].isEmpty = true
+                updatedData[x][y].percentComplete = 0
             }
         }
 
