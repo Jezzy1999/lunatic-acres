@@ -117,3 +117,22 @@
     border-color: #20a0ff;
     text-decoration: none;
 }
+
+.overlay-circle {
+  position: relative;
+  display: inline-block; /* <= shrinks container to image size */
+  transition: transform 150ms ease-in-out;
+}
+
+.overlay-circle img { /* <= optional, for responsiveness */
+   display: block;
+   max-width: 100%;
+   height: auto;
+}
+
+.overlay-circle svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  fill: none;
+}
