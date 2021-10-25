@@ -135,7 +135,7 @@ export default class WorldMap extends React.Component {
         });
     }
     // Component methods
-    componentWillReceiveProps(nextProps) {
+    componentDidReceiveProps(nextProps) {
         if (JSON.stringify(this.props) !== JSON.stringify(nextProps)) {
             this.setState({
                 boardData: this.initWorldData(nextProps.height, nextProps.width),
