@@ -29,6 +29,7 @@ export default class WorldMap extends React.Component {
                     x: i,
                     y: j,
                     isEmpty: true,
+                    contents: 0,
                 };
             }
         }
@@ -42,7 +43,16 @@ export default class WorldMap extends React.Component {
         let win = false;
 
         let updatedData = this.state.worldData;
-        updatedData[x][y].isEmpty = !updatedData[x][y].isEmpty;
+        if (updatedData[x][y].isEmpty === true) {
+            updatedData[x][y].contents = 1;
+            updatedData[x][y].isEmpty = false
+        } else {
+            updatedData[x][y].contents += 1;
+
+            if (updatedData[x][y].contents > 2) {
+                updatedData[x][y].isEmpty = true
+            }
+        }
 
         this.setState({
             worldData: updatedData,
