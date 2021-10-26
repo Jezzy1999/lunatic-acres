@@ -14,7 +14,7 @@ class App extends Component {
     width: 30,
   };
 
-  componentWillMount() {
+  componentDidMount() {
     client.onopen = () => {
       console.log('WebSocket Client Connected');
     };
@@ -33,7 +33,7 @@ class App extends Component {
             <Header />
             <div className="game">
                 <div className="game-info">
-                    <div className="instructions">
+                    <div>
                         <h4>Rules</h4>
                         <p>How about some rules here?</p>
                     </div>

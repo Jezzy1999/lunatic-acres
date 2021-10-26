@@ -36,8 +36,10 @@
 
 .game {
   display: flex;
-  flex-direction: column;
+  padding-top: 5%;
+  flex-direction: row;
   margin: 0 auto;
+  height: 90%;
 }
 
 .game-info {
@@ -52,7 +54,6 @@
 }
 
 .cell {
-  background: #fff;
   border: 1px solid #414c69;
   float: left;
   height: var(--tile-size);
@@ -66,11 +67,15 @@
 }
 
 .cell:hover {
-  background: #8e8ba2;
+  background: #c5752d;
 }
 
 .is-empty {
-  background: #7e7b92;
+  background: #b5651d;
+}
+
+.has-crops {
+  background-color: #b5651d;
 }
 
 .react-contextmenu {
@@ -113,4 +118,23 @@
     background-color: #20a0ff;
     border-color: #20a0ff;
     text-decoration: none;
+}
+
+.overlay-circle {
+  position: relative;
+  display: inline-block; /* <= shrinks container to image size */
+  transition: transform 150ms ease-in-out;
+}
+
+.overlay-circle img { /* <= optional, for responsiveness */
+   display: block;
+   max-width: 100%;
+   height: auto;
+}
+
+.overlay-circle svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  fill: none;
 }
