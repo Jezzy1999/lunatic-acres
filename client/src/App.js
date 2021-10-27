@@ -4,6 +4,7 @@ import './App.css';
 
 import Header from './components/header';
 import WorldMap from './components/WorldMap';
+import PlayerInfo from './components/PlayerInfo';
 
 const client = new W3CWebSocket('ws://127.0.0.1:8080/ws');
 
@@ -39,6 +40,7 @@ class App extends Component {
                     </div>
                 </div>
                 <WorldMap height={height} width={width} socket={client}/>
+                <PlayerInfo socket={client}/>
             </div>
           </div>
       );
