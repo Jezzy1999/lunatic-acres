@@ -1,29 +1,24 @@
 import React from 'react';
 
-export default class PlayerInfo extends React.Component {
+export const PlayerInfo = (props) => {
 
-    state = {
-        playerName: this.props.playerName,
-        playerData: [],
-    };
+    return (
+        <div> 
+            <table className="player-info" style={{'borderRadius':'5px'}}>
+            <tbody>
+                <tr>
+                    <td>Money</td>
+                    <td>0</td>
+                </tr>
+                <tr>
+                    <td>Wheat</td>
+                    <td>0</td>
+                </tr>
 
-    render(){
-        return (
-            <div> 
-                <table className="player-info" style={{'borderRadius':'5px'}}>
-                <tbody>
-                    <tr>
-                        <td>Money</td>
-                        <td>0</td>
-                    </tr>
-                    <tr>
-                        <td>Wheat</td>
-                        <td>0</td>
-                    </tr>
-
-                </tbody>
-                </table>
-            </div>
-        );
-    }
+            </tbody>
+            </table>
+        </div>
+    );
 }
+
+export default PlayerInfo;
