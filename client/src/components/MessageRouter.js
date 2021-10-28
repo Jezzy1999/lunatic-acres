@@ -8,6 +8,9 @@ const initialState = {
     error: null
 };
 
+const MessageRouterContext = createContext(null)
+export { MessageRouterContext }
+
 const Reducer = (state, action) => {
     console.log("Reducer:"+ state + " " + action)
     /*
@@ -37,9 +40,10 @@ const Reducer = (state, action) => {
     }*/
 };
 
-const MessageRouter = ({children}) => {
+export default ({value, children}) => {
     const [state, dispatch] = useReducer(Reducer, initialState);
     let socket;
+    let ws;
 
     const sendMessage = (message) => {
         socket.emit(JSON.stringify(message));
@@ -56,17 +60,13 @@ const MessageRouter = ({children}) => {
             //const payload = JSON.parse(msg);
             console.log(message);
         }
-        state.mr = {
-            socket: socket,
+        ws = {
             sendMessage
-        }        
+        }
     }
     return (
-        <MessageRouterContext.Provider value={[state, dispatch]}>
+        <MessageRouterContext.Provider value={ws}>
             {children}
         </MessageRouterContext.Provider>
     )
 };
-
-export const MessageRouterContext = createContext(initialState);
-export default MessageRouter;
