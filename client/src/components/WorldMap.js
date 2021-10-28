@@ -1,5 +1,7 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
 import Cell from './Cell';
+
+import MessageRouterContext from './MessageRouter';
 
 import {
   ContextMenu,
@@ -7,104 +9,86 @@ import {
   ContextMenuTrigger,
 } from "react-contextmenu";
 
-export default class WorldMap extends React.Component {
+export const WorldMap = (props) => {
 
-    state = {
-        worldData: this.initWorldData(this.props.height, this.props.width),
-        gameWon: false,
-    };
-
-    tick() {
-
-        let updatedData = this.state.worldData;
-        for (let y = 0; y < this.props.height; y++) {
-            for (let x = 0; x < this.props.width; x++) {
-                if (updatedData[y][x].isEmpty === false) {
-                    updatedData[y][x].percentComplete += 1
+    const [worldData, setWorldData] = React.useState(
+        () => {
+            let data = [];
+            for (let y = 0; y < props.height; y++) {
+                data.push([]);
+                for (let x = 0; x < props.width; x++) {
+                    data[y][x] = {
+                        x: x,
+                        y: y,
+                        isEmpty: true,
+                        contents: 0,
+                        percentComplete: 0,
+                    };
                 }
             }
+            return data;
         }
-        this.setState({
-            worldData: updatedData,
-        });
-    }
+    );
 
-    componentDidMount() {
-        this.interval = setInterval(() => this.tick(), 1000);        
-    }
+    useEffect(() => {
+        const interval = setInterval(() => {
 
-    componentWillUnmount() {
-        clearInterval(this.interval);
-    }
+            let updatedData = [...worldData];
+            for (let y = 0; y < props.height; y++) {
+                for (let x = 0; x < props.width; x++) {
+                    if (updatedData[y][x].isEmpty === false) {
+                        updatedData[y][x].percentComplete += 1
+                    }
+                }
+            }
+            setWorldData(updatedData)
+        }, 1000);
+        return () => clearInterval(interval);
+    }, []);
 
     /* Helper Functions */
-
-    // Gets initial board data
-    initWorldData(height, width) {
-        let data = [];
-
-        for (let i = 0; i < height; i++) {
-            data.push([]);
-            for (let j = 0; j < width; j++) {
-                data[i][j] = {
-                    x: i,
-                    y: j,
-                    isEmpty: true,
-                    contents: 0,
-                    percentComplete: 0,
-                };
-            }
-        }
-        console.log(data);
-        return data;
-    }
-
     // Handle User Events
 
-    handleCellClick(x, y) {
-        let win = false;
-
-        let updatedData = this.state.worldData;
-        if (updatedData[x][y].isEmpty === true) {
-            updatedData[x][y].contents = 1;
-            updatedData[x][y].isEmpty = false
+    const handleCellClick = (x, y) => {
+        let updatedData = [...worldData];
+        if (updatedData[y][x].isEmpty === true) {
+            updatedData[y][x].contents = 1;
+            updatedData[y][x].isEmpty = false
         } else {
-            updatedData[x][y].contents += 1;
+            updatedData[y][x].contents += 1;
 
-            if (updatedData[x][y].contents > 2) {
-                updatedData[x][y].isEmpty = true
-                updatedData[x][y].percentComplete = 0
+            if (updatedData[y][x].contents > 2) {
+                updatedData[y][x].isEmpty = true
+                updatedData[y][x].percentComplete = 0
             }
         }
-
-        this.setState({
-            worldData: updatedData,
-            gameWon: win,
-        });
+        setWorldData(updatedData)
+        console.log(worldData[y][x]);
     }
 
-    handleClick = (e, data, target) => {
-        const { socket } = this.props;
+    const handleClick = (e, data, target) => {
+        //const { socket } = this.props;
 
         //console.log(e, data, target);
         console.log(data.cell_x);
         console.log(data.cell_y);
 
-        socket.send('Hello from React, cell clicked at ' + data.cell_x + ',' + data.cell_y);
+        //const [state, dispatch] = useContext(MessageRouterContext);
+        //state.mr.sendMessage('Hello from React, cell clicked at ' + data.cell_x + ',' + data.cell_y);
     }
 
-    renderMenu(active, x, y) {
+    const renderMenu = () => {
         return (
         <div>
             <ContextMenu id="some_unique_identifier">
-                <MenuItem data={{d:"some_data"}} onClick={this.handleClick}>
+                <MenuItem data={{d:"some_data"}} onClick={handleClick}>
                     ContextMenu Item 1
                 </MenuItem>
-                <MenuItem data={{d:"some_data"}} onClick={this.handleClick}>
+                <MenuItem data={{d:"some_data"}} onClick={handleClick}>
                     ContextMenu Item 2
                 </MenuItem>
                 <MenuItem divider />
-                <MenuItem data={{d:"some_data"}} onClick={this.handleClick}>
+                <MenuItem data={{d:"some_data"}} onClick={handleClick}>
                     ContextMenu Item 3
                 </MenuItem>
             </ContextMenu>
@@ -112,19 +96,19 @@ export default class WorldMap extends React.Component {
         );
     }
 
-    renderBoard(data) {
-        return data.map((datarow) => {
+    const renderBoard = () => {
+        return worldData.map((datarow) => {
             return datarow.map((dataitem) => {
                 return (
                     <ContextMenuTrigger
-                        id="some_unique_identifier"
+                        id={"some_unique_identifier_" + dataitem.x + "_" + dataitem.y}
                         cell_x={dataitem.x}
                         cell_y={dataitem.y}
                         collect={p => p}
                     >
                     <div key={dataitem.x * datarow.length + dataitem.y}>
                         <Cell
-                            onClick={() => this.handleCellClick(dataitem.x, dataitem.y)}
+                            onClick={() => handleCellClick(dataitem.x, dataitem.y)}
                             value={dataitem}
                         />
                         {(datarow[datarow.length - 1] === dataitem) ? <div className="clear" /> : ""}
@@ -134,26 +118,15 @@ export default class WorldMap extends React.Component {
             })
         });
     }
-    // Component methods
-    componentDidReceiveProps(nextProps) {
-        if (JSON.stringify(this.props) !== JSON.stringify(nextProps)) {
-            this.setState({
-                boardData: this.initWorldData(nextProps.height, nextProps.width),
-                gameWon: false,
-            });
-        }
-    }
 
-    render() {
-        return (
-            <div className="board">
-                {
-                    this.renderBoard(this.state.worldData)
-                }
-                {
-                    this.renderMenu(this.state.menuActive)
-                }
-            </div>
-        );
-    }
+    return <div className="board">
+        {
+            renderBoard()
+        }
+        {
+            renderMenu()
+        }
+        </div>;
 }
+
+export default WorldMap;
