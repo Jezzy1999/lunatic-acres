@@ -46,6 +46,11 @@
   min-height: 50px;
 }
 
+.player-info{
+  display: flex;
+  padding-top: 5%;
+}
+
 .board {    
   display: grid;
   grid-template-columns: repeat(var(--cols), var(--tile-size));

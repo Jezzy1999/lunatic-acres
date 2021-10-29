@@ -1,19 +1,18 @@
 import React from 'react';
 
-export default class Cell extends React.Component {
+export const Cell = (props) => {
 
-
-    getValue(className){
-        if(this.props.value.isEmpty === true ){
+    const getValue = (className) => {
+        if(props.value.isEmpty === true ){
             return null;
         }
-        if (this.props.value.contents === 1){
+        if (props.value.contents === 1){
             const size = 30;
             const center = 20;
             const strokeWidth = 6;
             const radius = size / 2 - strokeWidth / 2;
             const circumference = 2 * Math.PI * radius;
-            const progressOffset = ((100 - this.props.value.percentComplete) / 100) * circumference;
+            const progressOffset = ((100 - props.value.percentComplete) / 100) * circumference;
 
             return (
                 <div className="overlay-circle">
@@ -46,13 +45,13 @@ export default class Cell extends React.Component {
         }
     }
 
-    render(){
-        let className = "cell" + (this.props.value.isEmpty ? " is-empty" : " has-crops");
+    let className = "cell" + (props.value.isEmpty ? " is-empty" : " has-crops");
 
-        return (
-            <div ref="cell" onClick={this.props.onClick} className={className} onContextMenu={this.props.cMenu}>
-                {this.getValue(className)}
-            </div>
-        );
-    }
+    return (
+        <div onClick={props.onClick} className={className} onContextMenu={props.cMenu}>
+            {getValue(className)}
+        </div>
+    );
 }
+
+export default Cell;
