@@ -1,7 +1,7 @@
 import React from 'react';
 import './App.css';
 
-import MessageRouterContext from './components/MessageRouter';
+import MessageRouter from './components/MessageRouter';
 import Header from './components/header';
 import WorldMap from './components/WorldMap';
 import PlayerInfo from './components/PlayerInfo';
@@ -12,7 +12,7 @@ export const App = () => {
   const width = 30
   
   return (
-      <MessageRouterContext>
+      <MessageRouter>
         <div>
           <Header />
           <div className="game">
@@ -26,7 +26,7 @@ export const App = () => {
               <PlayerInfo/>
           </div>
         </div>
-      </MessageRouterContext>
+      </MessageRouter>
   );
 }
 
