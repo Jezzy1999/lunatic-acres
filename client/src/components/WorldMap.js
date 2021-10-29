@@ -1,7 +1,7 @@
 import React, {useContext, useEffect} from 'react';
 import Cell from './Cell';
 
-import MessageRouterContext from './MessageRouter';
+import {MessageRouterContext} from './MessageRouter';
 
 import {
   ContextMenu,
