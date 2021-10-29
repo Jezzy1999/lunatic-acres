@@ -3,14 +3,9 @@ import Cell from './Cell';
 
 import {MessageRouterContext} from './MessageRouter';
 
-import {
-  ContextMenu,
-  MenuItem,
-  ContextMenuTrigger,
-} from "react-contextmenu";
-
 const WorldMap = (props) => {
-
+    // TODO I dont know how to fix this??
+    // eslint-disable-next-line  
     const [state, dispatch] = useContext(MessageRouterContext);
 
     const [worldData, setWorldData] = React.useState(
