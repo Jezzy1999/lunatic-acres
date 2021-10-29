@@ -52,9 +52,6 @@ const WorldMap = (props) => {
         return () => clearInterval(interval);
     }, []);
 
-    /* Helper Functions */
-    // Handle User Events
-
     const handleCellClick = (x, y) => {
         let updatedData = [...worldData];
         if (updatedData[y][x].isEmpty === true) {
