@@ -1,35 +1,46 @@
-import React, {createContext} from "react";
-import { w3cwebsocket as W3CWebSocket } from "websocket";
+import React, {createContext, useReducer} from "react";
 
-const MessageRouterContext = createContext(null)
-export { MessageRouterContext }
+const initialState = {
+    posts: [],
+    error: null
+};
 
-export default ({value, children}) => {
-    let socket;
-    let ws;
-
-    const sendMessage = (message) => {
-        socket.emit(JSON.stringify(message));
+const Reducer = (state, action) => {
+    switch (action.type) {
+        case 'SET_POSTS':
+            return {
+                ...state,
+                posts: action.payload
+            };
+        case 'ADD_POST':
+            return {
+                ...state,
+                posts: state.posts.concat(action.payload)
+            };
+        case 'REMOVE_POST':
+            return {
+                ...state,
+                posts: state.posts.filter(post => post.id !== action.payload)
+            };
+        case 'SET_ERROR':
+            return {
+                ...state,
+                error: action.payload
+            };
+        default:
+            return state;
     }
+};
 
-    if (!socket) {
-        socket = new W3CWebSocket('ws://127.0.0.1:8080/ws');
+const MessageRouter = ({children}) => {
+    const [state, dispatch] = useReducer(Reducer, initialState);
 
-        socket.onopen = () => {
-            console.log('WebSocket Client Connected');
-        };
-      
-        socket.onmessage = (message) => {
-            //const payload = JSON.parse(msg);
-            console.log(message);
-        }
-        ws = {
-            sendMessage
-        }
-    }
     return (
-        <MessageRouterContext.Provider value={ws}>
+        <MessageRouterContext.Provider value={[state, dispatch]}>
             {children}
         </MessageRouterContext.Provider>
-    )
+    );
 };
+
+export const MessageRouterContext = createContext(initialState);
+export default MessageRouter;
