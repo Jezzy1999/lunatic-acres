@@ -34,14 +34,18 @@ export const WorldMap = (props) => {
         const interval = setInterval(() => {
 
             let updatedData = [...worldData];
+            let anyUpdated = false;
             for (let y = 0; y < props.height; y++) {
                 for (let x = 0; x < props.width; x++) {
                     if (updatedData[y][x].isEmpty === false) {
                         updatedData[y][x].percentComplete += 1
+                        anyUpdated = true;
                     }
                 }
             }
-            setWorldData(updatedData)
+            if (anyUpdated) {
+                setWorldData(updatedData)
+            }
         }, 1000);
         return () => clearInterval(interval);
     }, []);
