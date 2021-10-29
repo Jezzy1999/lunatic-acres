@@ -9,7 +9,9 @@ import {
   ContextMenuTrigger,
 } from "react-contextmenu";
 
-export const WorldMap = (props) => {
+const WorldMap = (props) => {
+
+    const [state, dispatch] = useContext(MessageRouterContext);
 
     const [worldData, setWorldData] = React.useState(
         () => {
@@ -67,7 +69,8 @@ export const WorldMap = (props) => {
             }
         }
         setWorldData(updatedData)
-        console.log(worldData[y][x]);
+
+        dispatch({type: 'CELL_CLICKED', payload: {x:x, y:y}});
     }
 
     const handleClick = (e, data, target) => {
