@@ -70,46 +70,10 @@ const WorldMap = (props) => {
         dispatch({type: 'CELL_CLICKED', payload: {x:x, y:y}});
     }
 
-    const handleClick = (e, data, target) => {
-        //const { socket } = this.props;
-
-        //console.log(e, data, target);
-        console.log(data.cell_x);
-        console.log(data.cell_y);
-
-        //const [state, dispatch] = useContext(MessageRouterContext);
-        //state.mr.sendMessage('Hello from React, cell clicked at ' + data.cell_x + ',' + data.cell_y);
-    }
-
-    const renderMenu = () => {
-        return (
-        <div>
-            <ContextMenu id="some_unique_identifier">
-                <MenuItem data={{d:"some_data"}} onClick={handleClick}>
-                    ContextMenu Item 1
-                </MenuItem>
-                <MenuItem data={{d:"some_data"}} onClick={handleClick}>
-                    ContextMenu Item 2
-                </MenuItem>
-                <MenuItem divider />
-                <MenuItem data={{d:"some_data"}} onClick={handleClick}>
-                    ContextMenu Item 3
-                </MenuItem>
-            </ContextMenu>
-        </div>
-        );
-    }
-
     const renderBoard = () => {
         return worldData.map((datarow) => {
             return datarow.map((dataitem) => {
                 return (
-                    <ContextMenuTrigger
-                        id={"some_unique_identifier_" + dataitem.x + "_" + dataitem.y}
-                        cell_x={dataitem.x}
-                        cell_y={dataitem.y}
-                        collect={p => p}
-                    >
                     <div key={dataitem.x * datarow.length + dataitem.y}>
                         <Cell
                             onClick={() => handleCellClick(dataitem.x, dataitem.y)}
@@ -117,8 +81,7 @@ const WorldMap = (props) => {
                         />
                         {(datarow[datarow.length - 1] === dataitem) ? <div className="clear" /> : ""}
                     </div>
-                    </ContextMenuTrigger>
-                    );
+                );
             })
         });
     }
@@ -126,9 +89,6 @@ const WorldMap = (props) => {
     return <div className="board">
         {
             renderBoard()
-        }
-        {
-            renderMenu()
         }
         </div>;
 }
