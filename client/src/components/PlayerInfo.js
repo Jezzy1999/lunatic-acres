@@ -1,6 +1,14 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
+
+import {MessageRouterContext} from './MessageRouter';
 
 export const PlayerInfo = (props) => {
+
+    const [state, dispatch] = useContext(MessageRouterContext);
+    
+    useEffect(() => {
+        dispatch({type: 'PLAYER_LOGIN', payload: {playerName:"chris"}});
+    }, []);
 
     return (
         <div> 
