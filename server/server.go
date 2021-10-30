@@ -40,6 +40,8 @@ type Server struct {
 
 	// Buffered channel of outbound messages.
 	send chan []byte
+
+	messageListeners []func(message string, replyChannel chan<- []byte)
 }
 
 func (c *Server) readPump() {
@@ -58,9 +60,11 @@ func (c *Server) readPump() {
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		log.Println(string(message[:]))
-		c.send <- message
+		messageStr := string(bytes.TrimSpace(bytes.Replace(message, newline, space, -1)))
+		log.Printf("Received: %s\n", message)
+		for _, listener := range c.messageListeners {
+			listener(messageStr, c.send)
+		}
 	}
 }
 
