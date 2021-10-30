@@ -24,14 +24,8 @@ func serveHome(res http.ResponseWriter, req *http.Request) {
 func main() {
 
 	cfg := config.Initialise()
-	worldMap := world.Initialise(20, 20)
+	world.Initialise(20, 20, cfg)
 	fmt.Println("Welcome to Luncatic Acres")
-
-	for iy, y := range worldMap {
-		for ix, x := range y {
-			fmt.Printf("Value at %d,%d:%d\n", ix, iy, x)
-		}
-	}
 
 	http.HandleFunc("/", serveHome)
 	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
