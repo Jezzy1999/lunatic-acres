@@ -83,7 +83,7 @@ func doPlayerLogin(payload string, replyChannel chan<- []byte) {
 				Seeds   int64 `json:"seeds"`
 				Produce int64 `json:"produce"`
 			}
-			statsToReturn := playerStats{}
+			statsToReturn := playerStats{Money: p.Money, Seeds: p.Seeds}
 			statsJson, err := json.Marshal(statsToReturn)
 
 			if err != nil {
