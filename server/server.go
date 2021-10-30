@@ -127,3 +127,7 @@ func ServeWs(w http.ResponseWriter, r *http.Request) {
 	go server.writePump()
 	go server.readPump()
 }
+
+func AddMessageListener(newListener func(message string, replyChannel chan<- []byte)) {
+	messageListeners = append(messageListeners, newListener)
+}
