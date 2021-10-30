@@ -7,7 +7,7 @@ export const PlayerInfo = (props) => {
     const [state, dispatch] = useContext(MessageRouterContext);
     
     useEffect(() => {
-        dispatch({type: 'PLAYER_LOGIN', payload: {playerName:"chris"}});
+        dispatch({type: 'PLAYER_LOGIN', payload: JSON.stringify({playerName:"chris"})});
     }, []);
 
     return (
