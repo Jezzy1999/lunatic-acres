@@ -68,7 +68,7 @@ func playerMessageListener(message string, replyChannel chan<- []byte) {
 
 func doPlayerLogin(payload string, replyChannel chan<- []byte) {
 	type PlayerInfo struct {
-		Name string `json:"name"`
+		Name string `json:"playerName"`
 	}
 	var playerInfo PlayerInfo
 	if err := json.Unmarshal([]byte(payload), &playerInfo); err != nil {
@@ -84,13 +84,19 @@ func doPlayerLogin(payload string, replyChannel chan<- []byte) {
 				Produce int64 `json:"produce"`
 			}
 			statsToReturn := playerStats{}
-			str, err := json.Marshal(statsToReturn)
+			statsJson, err := json.Marshal(statsToReturn)
 
 			if err != nil {
 				fmt.Printf("Error converting player to json: %v", err)
-			} else {
-				replyChannel <- []byte(str)
+				return
 			}
+			msgInfo := MessageInfo{MsgType: "PLAYER_STATS", Payload: string(statsJson)}
+			str, err := json.Marshal(msgInfo)
+			if err != nil {
+				fmt.Printf("Error converting msgInfo to json: %v", err)
+				return
+			}
+			replyChannel <- []byte(str)
 		}
 	}
 }
