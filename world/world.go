@@ -13,10 +13,10 @@ var (
 	Players []player.Player
 )
 
-func Initialise(width int, height int, cfg config.Config) [][]uint8 {
-	var worldMap = make([][]uint8, height)
+func Initialise(cfg config.Config) [][]uint8 {
+	var worldMap = make([][]uint8, cfg.World.Height)
 	for y := range worldMap {
-		worldMap[y] = make([]uint8, width)
+		worldMap[y] = make([]uint8, cfg.World.Width)
 	}
 
 	files, err := ioutil.ReadDir(cfg.Folders.Players)
