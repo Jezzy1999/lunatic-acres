@@ -16,11 +16,11 @@ export const PlayerInfo = (props) => {
             <tbody>
                 <tr>
                     <td>Money</td>
-                    <td>0</td>
+                    <td>{state.playerInfo.Money}</td>
                 </tr>
                 <tr>
                     <td>Wheat</td>
-                    <td>0</td>
+                    <td>{state.playerInfo.Wheat}</td>
                 </tr>
 
             </tbody>
