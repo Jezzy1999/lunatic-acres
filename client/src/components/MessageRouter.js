@@ -2,19 +2,27 @@ import React, {createContext, useReducer} from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 const initialState = {
-    posts: [],
+    messagesToSend: [],
     socket: null,
     error: null
 };
 
 const Reducer = (state, action) => {
+    let messageQueue = state.messagesToSend
+    messageQueue.push(action)
+    
     switch (action.type) {
         case 'CELL_CLICKED':
-            state.socket.send(JSON.stringify(action));
             return {
                 ...state,
-                posts: action.payload
+                messagesToSend: messageQueue
             };
+        case 'PLAYER_LOGIN':
+            return {
+                ...state,
+                messagesToSend: messageQueue
+            };
+    
         default:
             return state;
     }
@@ -28,13 +36,15 @@ const MessageRouter = ({children}) => {
 
         state.socket.onopen = () => {
             console.log('WebSocket Client Connected');
+            while (state.messagesToSend.length > 0) {
+                state.socket.send(JSON.stringify(state.messagesToSend.shift()));
+            }
         };
 
         state.socket.onmessage = (message) => {
             console.log(message);
         }
     }
-
     return (
         <MessageRouterContext.Provider value={[state, dispatch]}>
             {children}
