@@ -19,7 +19,7 @@ type Config struct {
 	World struct {
 		Width  int `yaml:"width"`
 		Height int `yaml:"height"`
-	} `yaml:"folders"`
+	} `yaml:"world"`
 }
 
 func processError(err error) {
