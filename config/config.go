@@ -2,8 +2,9 @@ package config
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v2"
 	"os"
+
+	"gopkg.in/yaml.v2"
 )
 
 type Config struct {
@@ -14,6 +15,10 @@ type Config struct {
 	Folders struct {
 		Players string `yaml:"players"`
 		Farms   string `yaml:"farms"`
+	} `yaml:"folders"`
+	World struct {
+		Width  int `yaml:"width"`
+		Height int `yaml:"height"`
 	} `yaml:"folders"`
 }
 
