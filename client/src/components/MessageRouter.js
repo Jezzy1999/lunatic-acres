@@ -3,13 +3,13 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 const initialState = {
     messagesToSend: [],
+    playerInfo: {},
     socket: null,
     error: null
 };
 
 const Reducer = (state, action) => {
     let messageQueue = state.messagesToSend
-    messageQueue.push(action)
     
     switch (action.type) {
         case 'CELL_CLICKED':
@@ -18,11 +18,17 @@ const Reducer = (state, action) => {
                 messagesToSend: messageQueue
             };
         case 'PLAYER_LOGIN':
+            messageQueue.push(action)
             return {
                 ...state,
                 messagesToSend: messageQueue
             };
-    
+        case 'PLAYER_UPDATE':
+            let playerInfo = {Money: action.payload.money, Wheat: action.payload.seeds}
+            return {
+                ...state,
+                playerInfo: playerInfo
+            };
         default:
             return state;
     }
@@ -42,7 +48,16 @@ const MessageRouter = ({children}) => {
         };
 
         state.socket.onmessage = (message) => {
-            console.log(message);
+            const messageStruct = JSON.parse(message.data);
+            const payloadObject = JSON.parse(messageStruct.payload);
+
+            switch (messageStruct.type) {
+                case "PLAYER_STATS":
+                    dispatch({type:"PLAYER_UPDATE", payload:payloadObject})
+                    break;
+                default:
+                    console.log("Unknown message type:" + messageStruct.type);
+            }
         }
     }
     return (
