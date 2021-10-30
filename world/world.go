@@ -7,6 +7,7 @@ import (
 
 	"lunatic-acres/config"
 	"lunatic-acres/player"
+	"lunatic-acres/server"
 )
 
 var (
@@ -35,5 +36,13 @@ func Initialise(cfg config.Config) [][]uint8 {
 	for _, p := range Players {
 		fmt.Printf("%v\n", p)
 	}
+
+	server.AddMessageListener(playerMessageListener)
+
 	return worldMap
+}
+
+// Receives messages of the type PLAYER_LOGIN
+func playerMessageListener(message string, replyChannel chan<- []byte) {
+	replyChannel <- []byte(message)
 }
