@@ -26,6 +26,8 @@ const (
 var (
 	newline = []byte{'\n'}
 	space   = []byte{' '}
+
+	messageListeners []func(message string, replyChannel chan<- []byte)
 )
 
 var upgrader = websocket.Upgrader{
@@ -40,8 +42,6 @@ type Server struct {
 
 	// Buffered channel of outbound messages.
 	send chan []byte
-
-	messageListeners []func(message string, replyChannel chan<- []byte)
 }
 
 func (c *Server) readPump() {
@@ -62,7 +62,7 @@ func (c *Server) readPump() {
 		}
 		messageStr := string(bytes.TrimSpace(bytes.Replace(message, newline, space, -1)))
 		log.Printf("Received: %s\n", message)
-		for _, listener := range c.messageListeners {
+		for _, listener := range messageListeners {
 			listener(messageStr, c.send)
 		}
 	}
