@@ -26,6 +26,8 @@ const (
 var (
 	newline = []byte{'\n'}
 	space   = []byte{' '}
+
+	messageListeners []func(message string, replyChannel chan<- []byte)
 )
 
 var upgrader = websocket.Upgrader{
@@ -58,9 +60,11 @@ func (c *Server) readPump() {
 			}
 			break
 		}
-		message = bytes.TrimSpace(bytes.Replace(message, newline, space, -1))
-		log.Println(string(message[:]))
-		c.send <- message
+		messageStr := string(bytes.TrimSpace(bytes.Replace(message, newline, space, -1)))
+		log.Printf("Received: %s\n", message)
+		for _, listener := range messageListeners {
+			listener(messageStr, c.send)
+		}
 	}
 }
 
@@ -122,4 +126,8 @@ func ServeWs(w http.ResponseWriter, r *http.Request) {
 	// new goroutines.
 	go server.writePump()
 	go server.readPump()
+}
+
+func AddMessageListener(newListener func(message string, replyChannel chan<- []byte)) {
+	messageListeners = append(messageListeners, newListener)
 }

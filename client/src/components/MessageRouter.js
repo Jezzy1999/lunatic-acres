@@ -2,18 +2,32 @@ import React, {createContext, useReducer} from "react";
 import { w3cwebsocket as W3CWebSocket } from "websocket";
 
 const initialState = {
-    posts: [],
+    messagesToSend: [],
+    playerInfo: {},
     socket: null,
     error: null
 };
 
 const Reducer = (state, action) => {
+    let messageQueue = state.messagesToSend
+    
     switch (action.type) {
         case 'CELL_CLICKED':
-            state.socket.send(JSON.stringify(action));
             return {
                 ...state,
-                posts: action.payload
+                messagesToSend: messageQueue
+            };
+        case 'PLAYER_LOGIN':
+            messageQueue.push(action)
+            return {
+                ...state,
+                messagesToSend: messageQueue
+            };
+        case 'PLAYER_UPDATE':
+            let playerInfo = {Money: action.payload.money, Wheat: action.payload.seeds}
+            return {
+                ...state,
+                playerInfo: playerInfo
             };
         default:
             return state;
@@ -28,13 +42,24 @@ const MessageRouter = ({children}) => {
 
         state.socket.onopen = () => {
             console.log('WebSocket Client Connected');
+            while (state.messagesToSend.length > 0) {
+                state.socket.send(JSON.stringify(state.messagesToSend.shift()));
+            }
         };
 
         state.socket.onmessage = (message) => {
-            console.log(message);
+            const messageStruct = JSON.parse(message.data);
+            const payloadObject = JSON.parse(messageStruct.payload);
+
+            switch (messageStruct.type) {
+                case "PLAYER_STATS":
+                    dispatch({type:"PLAYER_UPDATE", payload:payloadObject})
+                    break;
+                default:
+                    console.log("Unknown message type:" + messageStruct.type);
+            }
         }
     }
-
     return (
         <MessageRouterContext.Provider value={[state, dispatch]}>
             {children}

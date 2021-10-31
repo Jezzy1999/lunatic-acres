@@ -1,6 +1,14 @@
-import React from 'react';
+import React, {useContext, useEffect} from 'react';
+
+import {MessageRouterContext} from './MessageRouter';
 
 export const PlayerInfo = (props) => {
+
+    const [state, dispatch] = useContext(MessageRouterContext);
+    
+    useEffect(() => {
+        dispatch({type: 'PLAYER_LOGIN', payload: JSON.stringify({playerName:"chris"})});
+    }, []);
 
     return (
         <div> 
@@ -8,11 +16,11 @@ export const PlayerInfo = (props) => {
             <tbody>
                 <tr>
                     <td>Money</td>
-                    <td>0</td>
+                    <td>{state.playerInfo.Money}</td>
                 </tr>
                 <tr>
                     <td>Wheat</td>
-                    <td>0</td>
+                    <td>{state.playerInfo.Wheat}</td>
                 </tr>
 
             </tbody>
