@@ -72,7 +72,7 @@ func doPlayerLogin(payload string, replyChannel chan<- []byte) {
 	}
 	var playerInfo PlayerInfo
 	if err := json.Unmarshal([]byte(payload), &playerInfo); err != nil {
-		fmt.Printf("Couldnt parse json for player login from %s", payload)
+		fmt.Printf("Couldnt parse json for player login from %s\n", payload)
 		return
 	}
 
@@ -87,13 +87,13 @@ func doPlayerLogin(payload string, replyChannel chan<- []byte) {
 			statsJson, err := json.Marshal(statsToReturn)
 
 			if err != nil {
-				fmt.Printf("Error converting player to json: %v", err)
+				fmt.Printf("Error converting player to json: %v\n", err)
 				return
 			}
 			msgInfo := MessageInfo{MsgType: "PLAYER_STATS", Payload: string(statsJson)}
 			str, err := json.Marshal(msgInfo)
 			if err != nil {
-				fmt.Printf("Error converting msgInfo to json: %v", err)
+				fmt.Printf("Error converting msgInfo to json: %v\n", err)
 				return
 			}
 			replyChannel <- []byte(str)
