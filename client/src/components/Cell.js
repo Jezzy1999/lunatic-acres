@@ -48,7 +48,7 @@ export const Cell = (props) => {
     let className = "cell" + (props.value.isEmpty ? " is-empty" : " has-crops");
 
     return (
-        <div onClick={props.onClick} className={className} onContextMenu={props.cMenu}>
+        <div onClick={props.onClick} className={className}>
             {getValue(className)}
         </div>
     );
