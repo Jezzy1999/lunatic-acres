@@ -169,4 +169,14 @@ li {
 li:hover {
   background-color: rgba(0, 0, 0, 0.54);
   cursor: pointer;
-} 
+}
+
+li.sub ul {
+  display: none;
+  position: relative; left: 100%; top:0;
+}
+  
+li.sub:hover ul {
+  display: block;
+}
+  
