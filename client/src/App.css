@@ -169,6 +169,7 @@ li {
 li:hover {
   background-color: rgba(0, 0, 0, 0.54);
   cursor: pointer;
+  height:10px;
 }
 
 li.sub ul {
