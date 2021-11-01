@@ -1,4 +1,4 @@
-import React, {useContext, useEffect} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import Cell from './Cell';
 
 import {MessageRouterContext} from './MessageRouter';
@@ -7,6 +7,8 @@ const WorldMap = (props) => {
     // TODO I dont know how to fix this??
     // eslint-disable-next-line  
     const [state, dispatch] = useContext(MessageRouterContext);
+
+    const [menuActive, setMenuActive] = useState({active:false});
 
     const [worldData, setWorldData] = React.useState(
         () => {
@@ -48,21 +50,16 @@ const WorldMap = (props) => {
     }, []);
 
     const handleCellClick = (x, y) => {
-        let updatedData = [...worldData];
-        if (updatedData[y][x].isEmpty === true) {
-            updatedData[y][x].contents = 1;
-            updatedData[y][x].isEmpty = false
-        } else {
-            updatedData[y][x].contents += 1;
+        setMenuActive({
+            active: true,
+            x: x,
+            y: y,
+        });
+        console.log("CC " + x + " " + y);
+    }
 
-            if (updatedData[y][x].contents > 2) {
-                updatedData[y][x].isEmpty = true
-                updatedData[y][x].percentComplete = 0
-            }
-        }
-        setWorldData(updatedData)
-
-        dispatch({type: 'CELL_CLICKED', payload: {x:x, y:y}});
+    const handleMenuSelect = (x, y) => {
+        dispatch({type: 'CELL_CLICKED', payload: JSON.stringify({x:menuActive.x, y:menuActive.y})});
     }
 
     const renderBoard = () => {
@@ -73,12 +70,43 @@ const WorldMap = (props) => {
                         <Cell
                             onClick={() => handleCellClick(dataitem.x, dataitem.y)}
                             value={dataitem}
+                            menu={addActiveMenuToCell(dataitem)}
                         />
                         {(datarow[datarow.length - 1] === dataitem) ? <div className="clear" /> : ""}
                     </div>
                 );
             })
         });
+    }
+
+    const renderMenu = () => {
+        return (
+            <div className={menuActive ? "dropdown" : "invisible-div"}>
+                <ul>
+                    <li onClick={handleMenuSelect} id="fertilize">Fertilize</li>
+                    <li className="sub">Plant
+                        <ul>
+                            <li onClick={handleMenuSelect} id="plant_wheat">Wheat</li>
+                        </ul>
+                    </li>
+                    <li className="sub">Harvest
+                        <ul>
+                            <li onClick={handleMenuSelect} id="plant_barley">Barley</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        )
+    }
+
+    const addActiveMenuToCell = (dataitem) => {
+        if (menuActive.active) {
+            if ((menuActive.x === dataitem.x) &&
+                (menuActive.y === dataitem.y)) {
+                return renderMenu();
+            }
+        }
+        return null;
     }
 
     return <div className="board">

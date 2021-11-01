@@ -5,6 +5,7 @@ const initialState = {
     messagesToSend: [],
     playerInfo: {},
     socket: null,
+    connectedToServer: false,
     error: null
 };
 
@@ -12,7 +13,13 @@ const Reducer = (state, action) => {
     let messageQueue = state.messagesToSend
     
     switch (action.type) {
+        case 'SERVER_CONNECTED':
+            return {
+                ...state,
+                connectedToServer: true
+            };
         case 'CELL_CLICKED':
+            messageQueue.push(action)
             return {
                 ...state,
                 messagesToSend: messageQueue
@@ -42,9 +49,7 @@ const MessageRouter = ({children}) => {
 
         state.socket.onopen = () => {
             console.log('WebSocket Client Connected');
-            while (state.messagesToSend.length > 0) {
-                state.socket.send(JSON.stringify(state.messagesToSend.shift()));
-            }
+            dispatch({type:"SERVER_CONNECTED", payload:null})
         };
 
         state.socket.onmessage = (message) => {
@@ -59,6 +64,9 @@ const MessageRouter = ({children}) => {
                     console.log("Unknown message type:" + messageStruct.type);
             }
         }
+    }
+    while ((state.messagesToSend.length > 0) && state.connectedToServer) {
+        state.socket.send(JSON.stringify(state.messagesToSend.shift()));
     }
     return (
         <MessageRouterContext.Provider value={[state, dispatch]}>
