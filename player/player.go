@@ -9,6 +9,7 @@ import (
 
 type Player struct {
 	Uid     string `json:"uid"`
+	FarmUid string `json:"farmuid"`
 	Name    string `json:"name"`
 	Money   int64  `json:"money"`
 	Seeds   int64  `json:"seeds"`
