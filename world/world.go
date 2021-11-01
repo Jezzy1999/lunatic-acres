@@ -92,6 +92,8 @@ func playerMessageListener(message string, replyChannel chan<- []byte) {
 	switch msgInfo.MsgType {
 	case "PLAYER_LOGIN":
 		doPlayerLogin(msgInfo.Payload, replyChannel)
+	case "CELL_CLICKED":
+		doCellClicked(msgInfo.Payload, replyChannel)
 	default:
 		doUnexpectedMsgType(msgInfo)
 	}
@@ -131,6 +133,46 @@ func doPlayerLogin(payload string, replyChannel chan<- []byte) {
 			replyChannel <- []byte(str)
 		}
 	}
+}
+
+func doCellClicked(payload string, replyChannel chan<- []byte) {
+	type CellInfo struct {
+		PlayerUid string `json:"playerUid"`
+		X         int    `json:"x"`
+		Y         int    `json:"y"`
+	}
+
+	var cellInfo CellInfo
+	if err := json.Unmarshal([]byte(payload), &cellInfo); err != nil {
+		fmt.Printf("Couldnt parse json for doCellClicked from %s\n", payload)
+		return
+	}
+
+	farm := FarmsByPlayerUid[cellInfo.PlayerUid]
+	farm.Fields[cellInfo.Y][cellInfo.X].Contents = 1
+	farm.Fields[cellInfo.Y][cellInfo.X].State = 1
+
+	type cellUpdate struct {
+		X        int `json:"x"`
+		Y        int `json:"y"`
+		Contents int `json:"contents"`
+		State    int `json:"state"`
+	}
+
+	cellToReturn := cellUpdate{X: cellInfo.X, Y: cellInfo.Y, Contents: 1, State: 1}
+	replyJson, err := json.Marshal(cellToReturn)
+
+	if err != nil {
+		fmt.Printf("Error converting player to json: %v\n", err)
+		return
+	}
+	msgInfo := MessageInfo{MsgType: "WORLD_CELL_UPDATE", Payload: string(replyJson)}
+	str, err := json.Marshal(msgInfo)
+	if err != nil {
+		fmt.Printf("Error converting msgInfo to json: %v\n", err)
+		return
+	}
+	replyChannel <- []byte(str)
 }
 
 func doUnexpectedMsgType(msgInfo MessageInfo) {
