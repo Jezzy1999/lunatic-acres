@@ -8,12 +8,14 @@ import (
 	"path/filepath"
 
 	"lunatic-acres/config"
+	"lunatic-acres/farm"
 	"lunatic-acres/player"
 	"lunatic-acres/server"
 )
 
 var (
-	Players []player.Player
+	Players          []player.Player
+	FarmsByPlayerUid map[string]farm.Farm
 )
 
 func Initialise(cfg config.Config) [][]uint8 {
@@ -37,6 +39,35 @@ func Initialise(cfg config.Config) [][]uint8 {
 
 	for _, p := range Players {
 		fmt.Printf("%v\n", p)
+	}
+
+	FarmsByPlayerUid = make(map[string]farm.Farm)
+	files, err = ioutil.ReadDir(cfg.Folders.Farms)
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	for _, f := range files {
+		if !f.IsDir() {
+			newFarm := farm.Farm{}
+			newFarm.ReadFromFile(filepath.Join(cfg.Folders.Farms, f.Name()))
+
+			foundPlayerForFarm := false
+			for _, p := range Players {
+				if p.FarmUid == newFarm.Uid {
+					FarmsByPlayerUid[p.Uid] = newFarm
+					foundPlayerForFarm = true
+					break
+				}
+			}
+			if !foundPlayerForFarm {
+				fmt.Printf("Couldnt find player for farm with uid %s\n", newFarm.Uid)
+			}
+		}
+	}
+
+	for k, f := range FarmsByPlayerUid {
+		fmt.Printf("Found farm \"%s\" belonging to \"%s\"\n", f.Name, k)
 	}
 
 	server.AddMessageListener(playerMessageListener)
