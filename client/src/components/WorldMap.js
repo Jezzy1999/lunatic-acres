@@ -59,7 +59,7 @@ const WorldMap = (props) => {
     }
 
     const handleMenuSelect = (x, y) => {
-        dispatch({type: 'CELL_CLICKED', payload: JSON.stringify({x:menuActive.x, y:menuActive.y})});
+        dispatch({type: 'CELL_CLICKED', payload: JSON.stringify({playerUid: state.playerInfo.uid, x: menuActive.x, y: menuActive.y})});
     }
 
     const renderBoard = () => {
