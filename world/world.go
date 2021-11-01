@@ -110,11 +110,12 @@ func doPlayerLogin(payload string, replyChannel chan<- []byte) {
 	for _, p := range Players {
 		if p.Name == playerInfo.Name {
 			type playerStats struct {
-				Money   int64 `json:"money"`
-				Seeds   int64 `json:"seeds"`
-				Produce int64 `json:"produce"`
+				Uid     string `json:"uid"`
+				Money   int64  `json:"money"`
+				Seeds   int64  `json:"seeds"`
+				Produce int64  `json:"produce"`
 			}
-			statsToReturn := playerStats{Money: p.Money, Seeds: p.Seeds}
+			statsToReturn := playerStats{Uid: p.Uid, Money: p.Money, Seeds: p.Seeds}
 			statsJson, err := json.Marshal(statsToReturn)
 
 			if err != nil {
