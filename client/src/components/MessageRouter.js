@@ -31,7 +31,7 @@ const Reducer = (state, action) => {
                 messagesToSend: messageQueue
             };
         case 'PLAYER_UPDATE':
-            let playerInfo = {Money: action.payload.money, Wheat: action.payload.seeds}
+            let playerInfo = {uid: action.payload.uid, Money: action.payload.money, Wheat: action.payload.seeds}
             return {
                 ...state,
                 playerInfo: playerInfo

@@ -174,10 +174,18 @@ li:hover {
 
 li.sub ul {
   display: none;
-  position: relative; left: 100%; top:0;
+  position: relative; left: 100%; top:-100%;
 }
   
 li.sub:hover ul {
   display: block;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+  box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.54);
 }
   
+.invisible-div {
+  overflow: hidden;
+  visibility: hidden;
+  height: 0;
+  width: 0;
+}
