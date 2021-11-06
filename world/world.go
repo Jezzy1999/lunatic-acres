@@ -149,7 +149,7 @@ func doCellClicked(payload string, replyChannel chan<- []byte) {
 	}
 
 	if farm, found := FarmsByPlayerUid[cellInfo.PlayerUid]; !found {
-		fmt.Printf("doCellClicked could find farm for PlayerUid %s\n", cellInfo.PlayerUid)
+		fmt.Printf("doCellClicked couldnt find farm for PlayerUid %s\n", cellInfo.PlayerUid)
 		return
 	} else {
 		farm.Fields[cellInfo.Y][cellInfo.X].Contents = 1
