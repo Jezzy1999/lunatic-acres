@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	Players          []player.Player
+	Players          []*player.Player
 	FarmsByPlayerUid map[string]farm.Farm
 )
 
@@ -33,7 +33,7 @@ func Initialise(cfg config.Config) [][]uint8 {
 		if !f.IsDir() {
 			newPlayer := player.Player{}
 			newPlayer.ReadFromFile(filepath.Join(cfg.Folders.Players, f.Name()))
-			Players = append(Players, newPlayer)
+			Players = append(Players, &newPlayer)
 		}
 	}
 
@@ -78,7 +78,7 @@ func Initialise(cfg config.Config) [][]uint8 {
 func GetPlayerFromName(name string) *player.Player {
 	for _, p := range Players {
 		if p.Name == name {
-			return &p
+			return p
 		}
 	}
 	return nil
@@ -87,7 +87,7 @@ func GetPlayerFromName(name string) *player.Player {
 func GetPlayerFromUid(uid string) *player.Player {
 	for _, p := range Players {
 		if p.Uid == uid {
-			return &p
+			return p
 		}
 	}
 	return nil
