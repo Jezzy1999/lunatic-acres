@@ -10,26 +10,7 @@ const WorldMap = (props) => {
 
     const [menuActive, setMenuActive] = useState({active:false});
 
-    const [worldData, setWorldData] = React.useState(
-        () => {
-            let data = [];
-            for (let y = 0; y < props.height; y++) {
-                data.push([]);
-                for (let x = 0; x < props.width; x++) {
-                    data[y][x] = {
-                        x: x,
-                        y: y,
-                        isEmpty: true,
-                        contents: 0,
-                        percentComplete: 0,
-                    };
-                }
-            }
-            return data;
-        }
-    );
-
-    useEffect(() => {
+/*    useEffect(() => {
         const interval = setInterval(() => {
 
             let updatedData = [...worldData];
@@ -47,7 +28,7 @@ const WorldMap = (props) => {
             }
         }, 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, []);*/
 
     const handleCellClick = (x, y) => {
         setMenuActive({
