@@ -4,6 +4,7 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 const initialState = {
     messagesToSend: [],
     playerInfo: {},
+    worldState: null,
     socket: null,
     connectedToServer: false,
     error: null
@@ -44,6 +45,24 @@ const Reducer = (state, action) => {
 const MessageRouter = ({children}) => {
     const [state, dispatch] = useReducer(Reducer, initialState);
 
+    const height = 20
+    const width = 30
+  
+    if (!state.worldState) {
+        state.worldState = [];
+        for (let y = 0; y < height; y++) {
+            state.worldState.push([]);
+            for (let x = 0; x < width; x++) {
+                state.worldState[y][x] = {
+                    x: x,
+                    y: y,
+                    isEmpty: true,
+                    contents: 0,
+                    percentComplete: 0,
+                };
+            }
+        }
+    }
     if (!state.socket) {
         state.socket = new W3CWebSocket('ws://127.0.0.1:8080/ws');
 
