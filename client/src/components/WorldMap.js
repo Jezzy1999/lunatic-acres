@@ -39,12 +39,12 @@ const WorldMap = (props) => {
         console.log("CC " + x + " " + y);
     }
 
-    const handleMenuSelect = (x, y) => {
-        dispatch({type: 'CELL_CLICKED', payload: JSON.stringify({playerUid: state.playerInfo.uid, x: menuActive.x, y: menuActive.y})});
+    const handleMenuSelect = (event) => {
+        dispatch({type: 'CELL_CLICKED', payload: JSON.stringify({playerUid: state.playerInfo.uid, x: menuActive.x, y: menuActive.y, id: event.target.id})});
     }
 
     const renderBoard = () => {
-        return worldData.map((datarow) => {
+        return state.worldState.map((datarow) => {
             return datarow.map((dataitem) => {
                 return (
                     <div key={dataitem.x * datarow.length + dataitem.y}>

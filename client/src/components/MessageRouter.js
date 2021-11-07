@@ -37,6 +37,17 @@ const Reducer = (state, action) => {
                 ...state,
                 playerInfo: playerInfo
             };
+        case 'WORLD_CELL_UPDATE':
+            let cellInfo = {x: action.payload.x, y: action.payload.y}
+            console.log(action)
+            let updatedState = [...state.worldState];
+            updatedState[action.payload.y][action.payload.x].isEmpty = false
+            updatedState[action.payload.y][action.payload.x].contents = action.payload.contents
+
+            return {
+                ...state,
+                worldState: updatedState
+            };
         default:
             return state;
     }
@@ -78,6 +89,9 @@ const MessageRouter = ({children}) => {
             switch (messageStruct.type) {
                 case "PLAYER_STATS":
                     dispatch({type:"PLAYER_UPDATE", payload:payloadObject})
+                    break;
+                case "WORLD_CELL_UPDATE":
+                    dispatch({type:"WORLD_CELL_UPDATE", payload:payloadObject})
                     break;
                 default:
                     console.log("Unknown message type:" + messageStruct.type);
