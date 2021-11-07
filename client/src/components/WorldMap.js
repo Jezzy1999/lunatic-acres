@@ -70,11 +70,7 @@ const WorldMap = (props) => {
                             <li onClick={handleMenuSelect} id="plant_wheat">Wheat</li>
                         </ul>
                     </li>
-                    <li className="sub">Harvest
-                        <ul>
-                            <li onClick={handleMenuSelect} id="plant_barley">Barley</li>
-                        </ul>
-                    </li>
+                    <li onClick={handleMenuSelect} id="harvest">Harvest</li>
                 </ul>
             </div>
         )
