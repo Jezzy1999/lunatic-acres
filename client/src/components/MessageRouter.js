@@ -39,7 +39,6 @@ const Reducer = (state, action) => {
             };
         case 'WORLD_CELL_UPDATE':
             let cellInfo = {x: action.payload.x, y: action.payload.y}
-            console.log(action)
             let updatedState = [...state.worldState];
             updatedState[action.payload.y][action.payload.x].isEmpty = false
             updatedState[action.payload.y][action.payload.x].contents = action.payload.contents

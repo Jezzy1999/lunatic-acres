@@ -36,7 +36,6 @@ const WorldMap = (props) => {
             x: x,
             y: y,
         });
-        console.log("CC " + x + " " + y);
     }
 
     const handleMenuSelect = (event) => {
