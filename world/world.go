@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"time"
 
 	"path/filepath"
 
@@ -18,7 +19,7 @@ var (
 	FarmsByPlayerUid map[string]farm.Farm
 )
 
-func Initialise(cfg config.Config) [][]uint8 {
+func Initialise(cfg config.Config) ([][]uint8, chan struct{}) {
 	var worldMap = make([][]uint8, cfg.World.Height)
 	for y := range worldMap {
 		worldMap[y] = make([]uint8, cfg.World.Width)
@@ -72,7 +73,24 @@ func Initialise(cfg config.Config) [][]uint8 {
 
 	server.AddMessageListener(playerMessageListener)
 
-	return worldMap
+	return worldMap, startUpdateTicks()
+}
+
+func startUpdateTicks() chan struct{} {
+	ticker := time.NewTicker(1 * time.Second)
+	quit := make(chan struct{})
+	go func() {
+		for {
+			select {
+			case <-ticker.C:
+				fmt.Println("Tick tick tick...")
+			case <-quit:
+				ticker.Stop()
+				return
+			}
+		}
+	}()
+	return quit
 }
 
 func GetPlayerFromName(name string) *player.Player {
