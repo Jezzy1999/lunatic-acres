@@ -24,7 +24,9 @@ func serveHome(res http.ResponseWriter, req *http.Request) {
 func main() {
 
 	cfg := config.Initialise()
-	world.Initialise(cfg)
+	_, quit := world.Initialise(cfg)
+	defer close(quit)
+
 	fmt.Println("Welcome to Luncatic Acres")
 
 	http.HandleFunc("/", serveHome)
