@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	Players          []player.Player
+	Players          []*player.Player
 	FarmsByPlayerUid map[string]farm.Farm
 )
 
@@ -33,7 +33,7 @@ func Initialise(cfg config.Config) [][]uint8 {
 		if !f.IsDir() {
 			newPlayer := player.Player{}
 			newPlayer.ReadFromFile(filepath.Join(cfg.Folders.Players, f.Name()))
-			Players = append(Players, newPlayer)
+			Players = append(Players, &newPlayer)
 		}
 	}
 
@@ -75,6 +75,24 @@ func Initialise(cfg config.Config) [][]uint8 {
 	return worldMap
 }
 
+func GetPlayerFromName(name string) *player.Player {
+	for _, p := range Players {
+		if p.Name == name {
+			return p
+		}
+	}
+	return nil
+}
+
+func GetPlayerFromUid(uid string) *player.Player {
+	for _, p := range Players {
+		if p.Uid == uid {
+			return p
+		}
+	}
+	return nil
+}
+
 type MessageInfo struct {
 	MsgType string `json:"type"`
 	Payload string `json:"payload"`
@@ -109,29 +127,11 @@ func doPlayerLogin(payload string, replyChannel chan<- []byte) {
 		return
 	}
 
-	for _, p := range Players {
-		if p.Name == playerInfo.Name {
-			type playerStats struct {
-				Uid     string `json:"uid"`
-				Money   int64  `json:"money"`
-				Seeds   int64  `json:"seeds"`
-				Produce int64  `json:"produce"`
-			}
-			statsToReturn := playerStats{Uid: p.Uid, Money: p.Money, Seeds: p.Seeds}
-			statsJson, err := json.Marshal(statsToReturn)
-
-			if err != nil {
-				fmt.Printf("Error converting player to json: %v\n", err)
-				return
-			}
-			msgInfo := MessageInfo{MsgType: "PLAYER_STATS", Payload: string(statsJson)}
-			str, err := json.Marshal(msgInfo)
-			if err != nil {
-				fmt.Printf("Error converting msgInfo to json: %v\n", err)
-				return
-			}
-			replyChannel <- []byte(str)
-		}
+	p := GetPlayerFromName(playerInfo.Name)
+	if p != nil {
+		p.SendPlayerStats(replyChannel)
+	} else {
+		fmt.Printf("Unknown player %s\n", playerInfo.Name)
 	}
 }
 
@@ -140,6 +140,7 @@ func doCellClicked(payload string, replyChannel chan<- []byte) {
 		PlayerUid string `json:"playerUid"`
 		X         int    `json:"x"`
 		Y         int    `json:"y"`
+		ID        string `json:"id"`
 	}
 
 	var cellInfo CellInfo
@@ -148,34 +149,12 @@ func doCellClicked(payload string, replyChannel chan<- []byte) {
 		return
 	}
 
+	player := GetPlayerFromUid(cellInfo.PlayerUid)
 	if farm, found := FarmsByPlayerUid[cellInfo.PlayerUid]; !found {
 		fmt.Printf("doCellClicked couldnt find farm for PlayerUid %s\n", cellInfo.PlayerUid)
 		return
 	} else {
-		farm.Fields[cellInfo.Y][cellInfo.X].Contents = 1
-		farm.Fields[cellInfo.Y][cellInfo.X].State = 1
-
-		type cellUpdate struct {
-			X        int `json:"x"`
-			Y        int `json:"y"`
-			Contents int `json:"contents"`
-			State    int `json:"state"`
-		}
-
-		cellToReturn := cellUpdate{X: cellInfo.X, Y: cellInfo.Y, Contents: 1, State: 1}
-		replyJson, err := json.Marshal(cellToReturn)
-
-		if err != nil {
-			fmt.Printf("Error converting player to json: %v\n", err)
-			return
-		}
-		msgInfo := MessageInfo{MsgType: "WORLD_CELL_UPDATE", Payload: string(replyJson)}
-		str, err := json.Marshal(msgInfo)
-		if err != nil {
-			fmt.Printf("Error converting msgInfo to json: %v\n", err)
-			return
-		}
-		replyChannel <- []byte(str)
+		player.HandleCellClicked(farm, cellInfo.X, cellInfo.Y, cellInfo.ID, replyChannel)
 	}
 }
 

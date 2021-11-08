@@ -4,6 +4,7 @@ import { w3cwebsocket as W3CWebSocket } from "websocket";
 const initialState = {
     messagesToSend: [],
     playerInfo: {},
+    worldState: null,
     socket: null,
     connectedToServer: false,
     error: null
@@ -36,6 +37,16 @@ const Reducer = (state, action) => {
                 ...state,
                 playerInfo: playerInfo
             };
+        case 'WORLD_CELL_UPDATE':
+            let cellInfo = {x: action.payload.x, y: action.payload.y}
+            let updatedState = [...state.worldState];
+            updatedState[action.payload.y][action.payload.x].isEmpty = false
+            updatedState[action.payload.y][action.payload.x].contents = action.payload.contents
+
+            return {
+                ...state,
+                worldState: updatedState
+            };
         default:
             return state;
     }
@@ -44,6 +55,24 @@ const Reducer = (state, action) => {
 const MessageRouter = ({children}) => {
     const [state, dispatch] = useReducer(Reducer, initialState);
 
+    const height = 20
+    const width = 30
+  
+    if (!state.worldState) {
+        state.worldState = [];
+        for (let y = 0; y < height; y++) {
+            state.worldState.push([]);
+            for (let x = 0; x < width; x++) {
+                state.worldState[y][x] = {
+                    x: x,
+                    y: y,
+                    isEmpty: true,
+                    contents: 0,
+                    percentComplete: 0,
+                };
+            }
+        }
+    }
     if (!state.socket) {
         state.socket = new W3CWebSocket('ws://127.0.0.1:8080/ws');
 
@@ -59,6 +88,9 @@ const MessageRouter = ({children}) => {
             switch (messageStruct.type) {
                 case "PLAYER_STATS":
                     dispatch({type:"PLAYER_UPDATE", payload:payloadObject})
+                    break;
+                case "WORLD_CELL_UPDATE":
+                    dispatch({type:"WORLD_CELL_UPDATE", payload:payloadObject})
                     break;
                 default:
                     console.log("Unknown message type:" + messageStruct.type);

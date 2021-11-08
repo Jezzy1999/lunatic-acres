@@ -10,26 +10,7 @@ const WorldMap = (props) => {
 
     const [menuActive, setMenuActive] = useState({active:false});
 
-    const [worldData, setWorldData] = React.useState(
-        () => {
-            let data = [];
-            for (let y = 0; y < props.height; y++) {
-                data.push([]);
-                for (let x = 0; x < props.width; x++) {
-                    data[y][x] = {
-                        x: x,
-                        y: y,
-                        isEmpty: true,
-                        contents: 0,
-                        percentComplete: 0,
-                    };
-                }
-            }
-            return data;
-        }
-    );
-
-    useEffect(() => {
+/*    useEffect(() => {
         const interval = setInterval(() => {
 
             let updatedData = [...worldData];
@@ -47,7 +28,7 @@ const WorldMap = (props) => {
             }
         }, 1000);
         return () => clearInterval(interval);
-    }, []);
+    }, []);*/
 
     const handleCellClick = (x, y) => {
         setMenuActive({
@@ -55,15 +36,14 @@ const WorldMap = (props) => {
             x: x,
             y: y,
         });
-        console.log("CC " + x + " " + y);
     }
 
-    const handleMenuSelect = (x, y) => {
-        dispatch({type: 'CELL_CLICKED', payload: JSON.stringify({playerUid: state.playerInfo.uid, x: menuActive.x, y: menuActive.y})});
+    const handleMenuSelect = (event) => {
+        dispatch({type: 'CELL_CLICKED', payload: JSON.stringify({playerUid: state.playerInfo.uid, x: menuActive.x, y: menuActive.y, id: event.target.id})});
     }
 
     const renderBoard = () => {
-        return worldData.map((datarow) => {
+        return state.worldState.map((datarow) => {
             return datarow.map((dataitem) => {
                 return (
                     <div key={dataitem.x * datarow.length + dataitem.y}>
@@ -89,11 +69,7 @@ const WorldMap = (props) => {
                             <li onClick={handleMenuSelect} id="plant_wheat">Wheat</li>
                         </ul>
                     </li>
-                    <li className="sub">Harvest
-                        <ul>
-                            <li onClick={handleMenuSelect} id="plant_barley">Barley</li>
-                        </ul>
-                    </li>
+                    <li onClick={handleMenuSelect} id="harvest">Harvest</li>
                 </ul>
             </div>
         )
