@@ -83,7 +83,45 @@ func startUpdateTicks() chan struct{} {
 		for {
 			select {
 			case <-ticker.C:
-				fmt.Println("Tick tick tick...")
+				for _, p := range Players {
+					if farm, found := FarmsByPlayerUid[p.Uid]; found {
+						for y, fields := range farm.Fields {
+							for x, field := range fields {
+								if field.Contents == 1 {
+									field.Ticks -= 1
+									if field.Ticks == 0 {
+										if field.State < 5 {
+											field.State += 1
+											fmt.Printf("%d %d %d %d\n", x, y, field.State, field.Ticks)
+											type cellUpdate struct {
+												X        int   `json:"x"`
+												Y        int   `json:"y"`
+												Contents uint8 `json:"contents"`
+												State    uint8 `json:"state"`
+											}
+
+											cellToReturn := cellUpdate{X: x, Y: y, Contents: field.Contents, State: field.State}
+											replyJson, err := json.Marshal(cellToReturn)
+											if err != nil {
+												fmt.Printf("Error converting cellUpdate to json: %v\n", err)
+												return
+											}
+
+											msgInfo := MessageInfo{MsgType: "WORLD_CELL_UPDATE", Payload: string(replyJson)}
+											str, err := json.Marshal(msgInfo)
+											if err != nil {
+												fmt.Printf("Error converting msgInfo to json: %v\n", err)
+												return
+											}
+											server.GetReplyChannelForPlayerUid(p.Uid) <- []byte(str)
+										}
+										field.Ticks = 5
+									}
+								}
+							}
+						}
+					}
+				}
 			case <-quit:
 				ticker.Stop()
 				return
@@ -117,7 +155,7 @@ type MessageInfo struct {
 }
 
 // Receives messages of the type PLAYER_LOGIN
-func playerMessageListener(message string, replyChannel chan<- []byte) {
+func playerMessageListener(message string, server *server.Server) {
 
 	var msgInfo MessageInfo
 	if err := json.Unmarshal([]byte(message), &msgInfo); err != nil {
@@ -127,33 +165,36 @@ func playerMessageListener(message string, replyChannel chan<- []byte) {
 
 	switch msgInfo.MsgType {
 	case "PLAYER_LOGIN":
-		doPlayerLogin(msgInfo.Payload, replyChannel)
+		doPlayerLogin(msgInfo.Payload, server)
 	case "CELL_CLICKED":
-		doCellClicked(msgInfo.Payload, replyChannel)
+		doCellClicked(msgInfo.Payload, server)
 	default:
 		doUnexpectedMsgType(msgInfo)
 	}
 }
 
-func doPlayerLogin(payload string, replyChannel chan<- []byte) {
+func doPlayerLogin(payload string, s *server.Server) string {
 	type PlayerInfo struct {
 		Name string `json:"playerName"`
 	}
 	var playerInfo PlayerInfo
 	if err := json.Unmarshal([]byte(payload), &playerInfo); err != nil {
 		fmt.Printf("Couldnt parse json for player login from %s\n", payload)
-		return
+		return ""
 	}
 
 	p := GetPlayerFromName(playerInfo.Name)
 	if p != nil {
-		p.SendPlayerStats(replyChannel)
+		s.MapPlayerUid(p.Uid)
+		p.SendPlayerStats(server.GetReplyChannelForPlayerUid(p.Uid))
+		return p.Uid
 	} else {
 		fmt.Printf("Unknown player %s\n", playerInfo.Name)
+		return ""
 	}
 }
 
-func doCellClicked(payload string, replyChannel chan<- []byte) {
+func doCellClicked(payload string, s *server.Server) {
 	type CellInfo struct {
 		PlayerUid string `json:"playerUid"`
 		X         int    `json:"x"`
@@ -172,7 +213,7 @@ func doCellClicked(payload string, replyChannel chan<- []byte) {
 		fmt.Printf("doCellClicked couldnt find farm for PlayerUid %s\n", cellInfo.PlayerUid)
 		return
 	} else {
-		player.HandleCellClicked(farm, cellInfo.X, cellInfo.Y, cellInfo.ID, replyChannel)
+		player.HandleCellClicked(farm, cellInfo.X, cellInfo.Y, cellInfo.ID, server.GetReplyChannelForPlayerUid(player.Uid))
 	}
 }
 
