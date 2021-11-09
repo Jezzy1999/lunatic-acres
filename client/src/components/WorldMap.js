@@ -39,6 +39,10 @@ const WorldMap = (props) => {
     }
 
     const handleMenuSelect = (event) => {
+        setMenuActive({
+            active: false,
+        });
+        event.stopPropagation();
         dispatch({type: 'CELL_CLICKED', payload: JSON.stringify({playerUid: state.playerInfo.uid, x: menuActive.x, y: menuActive.y, id: event.target.id})});
     }
 
