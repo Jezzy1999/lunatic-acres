@@ -10,6 +10,7 @@ import (
 type Field struct {
 	Contents uint8 `json:"contents"`
 	State    uint8 `json:"state"`
+	Ticks    uint8 `json:"ticks"`
 }
 
 type Farm struct {
