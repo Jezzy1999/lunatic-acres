@@ -14,9 +14,9 @@ type Field struct {
 }
 
 type Farm struct {
-	Uid    string    `json:"uid"`
-	Name   string    `json:"name"`
-	Fields [][]Field `json:"fields"`
+	Uid    string     `json:"uid"`
+	Name   string     `json:"name"`
+	Fields [][]*Field `json:"fields"`
 }
 
 func (f *Farm) ReadFromFile(filename string) {
