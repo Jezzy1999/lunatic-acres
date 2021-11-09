@@ -90,7 +90,7 @@ func startUpdateTicks() chan struct{} {
 								if field.Contents == 1 {
 									field.Ticks -= 1
 									if field.Ticks == 0 {
-										if field.State < 5 {
+										if field.State < 4 {
 											field.State += 1
 											fmt.Printf("%d %d %d %d\n", x, y, field.State, field.Ticks)
 											type cellUpdate struct {
