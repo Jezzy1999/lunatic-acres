@@ -42,6 +42,7 @@ const Reducer = (state, action) => {
             let updatedState = [...state.worldState];
             updatedState[action.payload.y][action.payload.x].isEmpty = false
             updatedState[action.payload.y][action.payload.x].contents = action.payload.contents
+            updatedState[action.payload.y][action.payload.x].state = action.payload.state
 
             return {
                 ...state,

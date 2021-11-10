@@ -27,7 +27,9 @@ var (
 	newline = []byte{'\n'}
 	space   = []byte{' '}
 
-	messageListeners []func(message string, replyChannel chan<- []byte)
+	messageListeners []func(string, *Server)
+
+	serversByPlayerUid = make(map[string]*Server)
 )
 
 var upgrader = websocket.Upgrader{
@@ -44,16 +46,27 @@ type Server struct {
 	send chan []byte
 }
 
-func (c *Server) readPump() {
+func (server *Server) MapPlayerUid(uid string) {
+	serversByPlayerUid[uid] = server
+}
+
+func GetReplyChannelForPlayerUid(uid string) chan<- []byte {
+	if _, found := serversByPlayerUid[uid]; !found {
+		return nil
+	}
+	return serversByPlayerUid[uid].send
+}
+
+func (s *Server) readPump() {
 	defer func() {
-		c.conn.Close()
-		close(c.send)
+		s.conn.Close()
+		close(s.send)
 	}()
-	c.conn.SetReadLimit(maxMessageSize)
-	c.conn.SetReadDeadline(time.Now().Add(pongWait))
-	c.conn.SetPongHandler(func(string) error { c.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
+	s.conn.SetReadLimit(maxMessageSize)
+	s.conn.SetReadDeadline(time.Now().Add(pongWait))
+	s.conn.SetPongHandler(func(string) error { s.conn.SetReadDeadline(time.Now().Add(pongWait)); return nil })
 	for {
-		_, message, err := c.conn.ReadMessage()
+		_, message, err := s.conn.ReadMessage()
 		if err != nil {
 			if websocket.IsUnexpectedCloseError(err, websocket.CloseGoingAway, websocket.CloseAbnormalClosure) {
 				log.Printf("error: %v", err)
@@ -63,7 +76,7 @@ func (c *Server) readPump() {
 		messageStr := string(bytes.TrimSpace(bytes.Replace(message, newline, space, -1)))
 		log.Printf("Received: %s\n", message)
 		for _, listener := range messageListeners {
-			listener(messageStr, c.send)
+			listener(messageStr, s)
 		}
 	}
 }
@@ -121,6 +134,6 @@ func ServeWs(w http.ResponseWriter, r *http.Request) {
 	go server.readPump()
 }
 
-func AddMessageListener(newListener func(message string, replyChannel chan<- []byte)) {
+func AddMessageListener(newListener func(string, *Server)) {
 	messageListeners = append(messageListeners, newListener)
 }

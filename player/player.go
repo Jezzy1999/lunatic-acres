@@ -82,6 +82,7 @@ func (p *Player) HandleCellClicked(farm farm.Farm, x int, y int, menuId string, 
 		}
 		farm.Fields[y][x].Contents = 1
 		farm.Fields[y][x].State = 0
+		farm.Fields[y][x].Ticks = 5
 
 		p.Money -= 30
 		p.SendPlayerStats(replyChannel)
