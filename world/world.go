@@ -173,24 +173,22 @@ func playerMessageListener(message string, server *server.Server) {
 	}
 }
 
-func doPlayerLogin(payload string, s *server.Server) string {
+func doPlayerLogin(payload string, s *server.Server) {
 	type PlayerInfo struct {
 		Name string `json:"playerName"`
 	}
 	var playerInfo PlayerInfo
 	if err := json.Unmarshal([]byte(payload), &playerInfo); err != nil {
 		fmt.Printf("Couldnt parse json for player login from %s\n", payload)
-		return ""
+		return
 	}
 
 	p := GetPlayerFromName(playerInfo.Name)
 	if p != nil {
 		s.MapPlayerUid(p.Uid)
 		p.SendPlayerStats(server.GetReplyChannelForPlayerUid(p.Uid))
-		return p.Uid
 	} else {
 		fmt.Printf("Unknown player %s\n", playerInfo.Name)
-		return ""
 	}
 }
 
