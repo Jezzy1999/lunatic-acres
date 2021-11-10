@@ -19,7 +19,7 @@ var (
 	FarmsByPlayerUid map[string]farm.Farm
 )
 
-func Initialise(cfg config.Config) ([][]uint8, chan struct{}) {
+func Initialise(cfg config.Config) chan struct{} {
 	var worldMap = make([][]uint8, cfg.World.Height)
 	for y := range worldMap {
 		worldMap[y] = make([]uint8, cfg.World.Width)
@@ -73,7 +73,7 @@ func Initialise(cfg config.Config) ([][]uint8, chan struct{}) {
 
 	server.AddMessageListener(playerMessageListener)
 
-	return worldMap, startUpdateTicks()
+	return startUpdateTicks()
 }
 
 func startUpdateTicks() chan struct{} {
