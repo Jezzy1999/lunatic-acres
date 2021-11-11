@@ -59,6 +59,7 @@
 }
 
 .cell {
+  position: relative;
   border: 1px solid #414c69;
   float: left;
   height: var(--tile-size);
@@ -175,7 +176,7 @@
 }
 
 .dropdown {
-  position: relative;
+  position: absolute;
   top: 50%;
   left: 50%;
   width: 100px;
