@@ -85,41 +85,7 @@ func startUpdateTicks() chan struct{} {
 			case <-ticker.C:
 				for _, p := range Players {
 					if farm, found := FarmsByPlayerUid[p.Uid]; found {
-						for y, fields := range farm.Fields {
-							for x, field := range fields {
-								if field.Contents == 1 {
-									field.Ticks -= 1
-									if field.Ticks == 0 {
-										if field.State < 4 {
-											field.State += 1
-											fmt.Printf("%d %d %d %d\n", x, y, field.State, field.Ticks)
-											type cellUpdate struct {
-												X        int   `json:"x"`
-												Y        int   `json:"y"`
-												Contents uint8 `json:"contents"`
-												State    uint8 `json:"state"`
-											}
-
-											cellToReturn := cellUpdate{X: x, Y: y, Contents: field.Contents, State: field.State}
-											replyJson, err := json.Marshal(cellToReturn)
-											if err != nil {
-												fmt.Printf("Error converting cellUpdate to json: %v\n", err)
-												return
-											}
-
-											msgInfo := MessageInfo{MsgType: "WORLD_CELL_UPDATE", Payload: string(replyJson)}
-											str, err := json.Marshal(msgInfo)
-											if err != nil {
-												fmt.Printf("Error converting msgInfo to json: %v\n", err)
-												return
-											}
-											server.GetReplyChannelForPlayerUid(p.Uid) <- []byte(str)
-										}
-										field.Ticks = 5
-									}
-								}
-							}
-						}
+						farm.Update(p.Uid)
 					}
 				}
 			case <-quit:
