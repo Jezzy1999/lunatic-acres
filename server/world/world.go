@@ -115,15 +115,10 @@ func GetPlayerFromUid(uid string) *player.Player {
 	return nil
 }
 
-type MessageInfo struct {
-	MsgType string `json:"type"`
-	Payload string `json:"payload"`
-}
-
 // Receives messages of the type PLAYER_LOGIN
-func playerMessageListener(message string, server *server.Server) {
+func playerMessageListener(message string, s *server.Server) {
 
-	var msgInfo MessageInfo
+	var msgInfo server.MessageInfo
 	if err := json.Unmarshal([]byte(message), &msgInfo); err != nil {
 		fmt.Printf("Couldnt parse json from %s", message)
 		return
@@ -131,9 +126,9 @@ func playerMessageListener(message string, server *server.Server) {
 
 	switch msgInfo.MsgType {
 	case "PLAYER_LOGIN":
-		doPlayerLogin(msgInfo.Payload, server)
+		doPlayerLogin(msgInfo.Payload, s)
 	case "CELL_CLICKED":
-		doCellClicked(msgInfo.Payload, server)
+		doCellClicked(msgInfo.Payload, s)
 	default:
 		doUnexpectedMsgType(msgInfo)
 	}
@@ -181,6 +176,6 @@ func doCellClicked(payload string, s *server.Server) {
 	}
 }
 
-func doUnexpectedMsgType(msgInfo MessageInfo) {
+func doUnexpectedMsgType(msgInfo server.MessageInfo) {
 	fmt.Printf("Unexpected message type: %s\n", msgInfo.MsgType)
 }
