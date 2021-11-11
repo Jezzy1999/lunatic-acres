@@ -145,31 +145,31 @@
 }
 
 .sprite-wheat4 {
-	background: url('../../data/crops.png') no-repeat -51px -240px;
+	background: url('/crops.png') no-repeat -51px -240px;
 	width: 45px;
 	height: 48px;
 }
 
 .sprite-wheat3 {
-	background: url('../../data/crops.png') no-repeat -99px -240px;
+	background: url('/crops.png') no-repeat -99px -240px;
 	width: 45px;
 	height: 45px;
 }
 
 .sprite-wheat2 {
-	background: url('../../data/crops.png') no-repeat -147px -246px;
+	background: url('/crops.png') no-repeat -147px -246px;
 	width: 42px;
 	height: 39px;
 }
 
 .sprite-wheat1 {
-	background: url('../../data/crops.png') no-repeat -201px -249px;
+	background: url('/crops.png') no-repeat -201px -249px;
 	width: 30px;
 	height: 33px;
 }
 
 .sprite-wheat0 {
-	background: url('../../data/crops.png') no-repeat -246px -246px;
+	background: url('/crops.png') no-repeat -246px -246px;
 	width: 36px;
 	height: 36px;
 }
