@@ -46,6 +46,11 @@ type Server struct {
 	send chan []byte
 }
 
+type MessageInfo struct {
+	MsgType string `json:"type"`
+	Payload string `json:"payload"`
+}
+
 func (server *Server) MapPlayerUid(uid string) {
 	serversByPlayerUid[uid] = server
 }

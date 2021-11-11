@@ -12,9 +12,7 @@ export const Cell = (props) => {
                 <div className={sprite}></div>
             )
         }
-        else {
-            return "C";
-        }
+        return null;
     }
 
     let className = "cell" + (props.value.isEmpty ? " is-empty" : " has-crops");

@@ -4,31 +4,6 @@
   --tile-size: 40px;
 }
 
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
-
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
-
-.App-intro {
-  font-size: large;
-}
-
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
 .clear {
   clear: both;
   content: ""
@@ -59,6 +34,7 @@
 }
 
 .cell {
+  position: relative;
   border: 1px solid #414c69;
   float: left;
   height: var(--tile-size);
@@ -83,48 +59,6 @@
   background-color: #b5651d;
 }
 
-.react-contextmenu {
-    min-width: 160px;
-    padding: 5px 0;
-    margin: 2px 0 0;
-    font-size: 16px;
-    color: #373a3c;
-    text-align: left;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid rgba(0,0,0,.15);
-    border-radius: .25rem;
-    outline: none;
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 250ms ease !important;
-}
-
-.react-contextmenu.react-contextmenu--visible {
-    opacity: 1;
-    pointer-events: auto;
-}
-
-.react-contextmenu-item {
-    padding: 3px 20px;
-    font-weight: 400;
-    line-height: 1.5;
-    color: #373a3c;
-    text-align: inherit;
-    white-space: nowrap;
-    background: 0 0;
-    border: 0;
-  cursor: pointer;
-}
-
-.react-contextmenu-item.react-contextmenu-item--active,
-.react-contextmenu-item.react-contextmenu-item--selected {
-    color: #fff;
-    background-color: #20a0ff;
-    border-color: #20a0ff;
-    text-decoration: none;
-}
-
 .overlay-circle {
   position: relative;
   display: inline-block; /* <= shrinks container to image size */
@@ -145,37 +79,37 @@
 }
 
 .sprite-wheat4 {
-	background: url('../../data/crops.png') no-repeat -51px -240px;
+	background: url('/crops.png') no-repeat -51px -240px;
 	width: 45px;
 	height: 48px;
 }
 
 .sprite-wheat3 {
-	background: url('../../data/crops.png') no-repeat -99px -240px;
+	background: url('/crops.png') no-repeat -99px -240px;
 	width: 45px;
 	height: 45px;
 }
 
 .sprite-wheat2 {
-	background: url('../../data/crops.png') no-repeat -147px -246px;
+	background: url('/crops.png') no-repeat -147px -246px;
 	width: 42px;
 	height: 39px;
 }
 
 .sprite-wheat1 {
-	background: url('../../data/crops.png') no-repeat -201px -249px;
+	background: url('/crops.png') no-repeat -201px -249px;
 	width: 30px;
 	height: 33px;
 }
 
 .sprite-wheat0 {
-	background: url('../../data/crops.png') no-repeat -246px -246px;
+	background: url('/crops.png') no-repeat -246px -246px;
 	width: 36px;
 	height: 36px;
 }
 
 .dropdown {
-  position: relative;
+  position: absolute;
   top: 50%;
   left: 50%;
   width: 100px;
